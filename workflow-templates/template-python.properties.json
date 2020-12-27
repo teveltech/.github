@@ -1,0 +1,14 @@
+{
+    "name": "Tevel Template Python step",
+    "description": "Tevel Python workflow template.",
+    "iconName": "example-icon",
+    "categories": [
+        "Python"
+    ],
+    "filePatterns": [
+        "package.json$",
+        "^Dockerfile",
+        "setup.py$",
+        ".*\\.md$"
+    ]
+}

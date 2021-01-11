@@ -1,4 +1,4 @@
-name: Template Python step
+name: Base image release workflow template
 
 # Controls when the action will run. 
 on:
@@ -23,8 +23,13 @@ jobs:
           ref: ${{ github.head_ref }}   # checkout the correct branch name
           fetch-depth: 0                # fetch the whole repo history
       
+      - name: Extract branch name
+        shell: bash
+        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+        id: extract_branch
+      
       - name: Docker Build
-        run: docker build -t jfrog.local:8081/reg/${{ github.event.repository.name }}:${GITHUB_REF##*/} .
+        run: docker build -t jfrog.local:8081/reg/${{ github.event.repository.name }}:${{ steps.extract_branch.outputs.branch }} .
 
       - name: Docker Push
-        run: docker push jfrog.local:8081/reg/${{ github.event.repository.name }}:${GITHUB_REF##*/}
+        run: docker push jfrog.local:8081/reg/${{ github.event.repository.name }}:${{ steps.extract_branch.outputs.branch }}

@@ -1,5 +1,5 @@
 {
-    "name": "Base Image Build",
+    "name": "Node Base Image Build",
     "description": "Tevel BaseImage workflow template.",
     "categories": [
         "docker"

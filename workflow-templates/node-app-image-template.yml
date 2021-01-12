@@ -1,0 +1,30 @@
+name: Template Node-app step
+
+# Controls when the action will run. 
+on:
+  push:
+    branches: [ '*' ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  build:
+    # The type of runner that the job will run on
+    runs-on: self-hosted
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ github.head_ref }}   # checkout the correct branch name
+          fetch-depth: 0                # fetch the whole repo history
+      
+      - name: Docker Build
+        run: docker build -t jfrog.local:8081/reg/${{ github.event.repository.name }}:${GITHUB_REF##*/} .
+
+      - name: Docker Push
+        run: docker push jfrog.local:8081/reg/${{ github.event.repository.name }}:${GITHUB_REF##*/}

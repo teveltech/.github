@@ -1,0 +1,11 @@
+{
+    "name": "Docker Build ARM64 Template",
+    "description": "Docker Build ARM64 Template",
+    "categories": [
+        "docker"
+    ],
+    "filePatterns": [
+        "^Dockerfile",
+        ".*\\.md$"
+    ]
+}

@@ -1,0 +1,11 @@
+{
+    "name": "Conan Package Template",
+    "description": "Conan Package Template",
+    "categories": [
+        "conanfile"
+    ],
+    "filePatterns": [
+        "conanfile.py",
+        ".*\\.md$"
+    ]
+}

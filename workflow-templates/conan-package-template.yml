@@ -15,7 +15,7 @@ jobs:
   build:
     # The type of runner that the job will run on
     runs-on: self-hosted
-    container: jfrog.local:8081/reg/base/base-full:master
+    container: jfrog.local:8081/reg/base/base-full:master-AMD64
     
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:

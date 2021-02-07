@@ -1,6 +1,7 @@
 # This is a basic workflow to help you get started with Actions
 
-name: Conan Package Template
+name: Template Docker Build ARM64
+
 
 # Controls when the action will run. 
 on:
@@ -15,8 +16,7 @@ jobs:
   build:
     # The type of runner that the job will run on
     runs-on: self-hosted
-    container: jfrog.local:8081/reg/base/base-full:master-AMD64
-    
+
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
@@ -25,6 +25,20 @@ jobs:
         with:
           ref: ${{ github.head_ref }}   # checkout the correct branch name
           fetch-depth: 0                # fetch the whole repo history
+          
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@master
+        with:
+          driver-opts: network=host
+          driver: docker
+
+      - name: Login to Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ${{ secrets.JFROG_URL }}
+          username: ${{ secrets.DOCKER_REGISTRY_USER }} 
+          password: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
       
       - name: handle version update
         uses: teveltech/github-tag-action@master
@@ -32,22 +46,18 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           dry_run: true
-        
-      - name: Override version in conanpackage.py
-        uses: teveltech/version-action@master
-        with:
-          new_version: ${{ steps.semantic.outputs.new_tag }}
 
-      - name: link conan config directory to github home /github/home
-        run: rm -rf $HOME/.conan && ln -s /root/.conan $HOME
-      
-      - name: Create conan package
-        shell: bash
-        run: source /opt/ros/melodic/setup.bash && conan create . _/_ -s arch=x86_64 -s arch_build=x86_64 --build missing -r tevel-conan
-        
-      - name: Upload conan packages
-        run: conan upload "*" -c -r tevel-conan --all
-        
+      - name: Build ARM64
+        uses: docker/build-push-action@v2
+        with:
+          builder: ${{ steps.buildx.outputs.name }}
+          context: .
+          file: ./Dockerfile
+          platforms: linux/arm64
+          pull: true
+          push: true
+          tags: jfrog.local:8081/reg/<namespace>/${{ github.event.repository.name }}:${{ steps.semantic.outputs.new_tag }}
+
       - name: Create a GitHub release
         if: ${{ steps.semantic.outputs.prerelease != 'true' }}
         uses: actions/create-release@v1
@@ -58,4 +68,5 @@ jobs:
           release_name: Release ${{ steps.semantic.outputs.new_tag }}
           body: |
             Docker pull command:
+            <pre><code> docker pull jfrog.local:8081/reg/<namespace>/${{ github.event.repository.name }}:${{ steps.semantic.outputs.new_tag }} </code></pre>
             ${{ steps.semantic.outputs.changelog }}

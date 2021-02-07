@@ -1,5 +1,5 @@
 {
-    "name": "CPP APP Image Build",
+    "name": "Docker Image AMD64 Build",
     "description": "Tevel BaseImage workflow template.",
     "categories": [
         "docker"

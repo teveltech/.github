@@ -1,6 +1,6 @@
 # This is a basic workflow to help you get started with Actions
 
-name: Template CPP-app step FAR APPS
+name: Template Docker Build AMD64
 
 
 # Controls when the action will run. 
@@ -56,7 +56,7 @@ jobs:
           platforms: linux/amd64
           pull: true
           push: true
-          tags: jfrog.local:8081/reg/drone/${{ github.event.repository.name }}:${{ steps.semantic.outputs.new_tag }}
+          tags: jfrog.local:8081/reg/<namespace>/${{ github.event.repository.name }}:${{ steps.semantic.outputs.new_tag }}
 
       - name: Create a GitHub release
         if: ${{ steps.semantic.outputs.prerelease != 'true' }}
@@ -68,5 +68,5 @@ jobs:
           release_name: Release ${{ steps.semantic.outputs.new_tag }}
           body: |
             Docker pull command:
-            <pre><code> docker pull jfrog.local:8081/reg/drone/${{ github.event.repository.name }}:${{ steps.semantic.outputs.new_tag }} </code></pre>
+            <pre><code> docker pull jfrog.local:8081/reg/<namespace>/${{ github.event.repository.name }}:${{ steps.semantic.outputs.new_tag }} </code></pre>
             ${{ steps.semantic.outputs.changelog }}

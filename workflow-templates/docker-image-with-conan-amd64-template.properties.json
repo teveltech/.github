@@ -1,5 +1,5 @@
 {
-    "name": "Docker Image with Conan ARM64 Build",
+    "name": "Docker Image with Conan AMD64 Build",
     "description": "Tevel BaseImage workflow template.",
     "categories": [
         "docker",

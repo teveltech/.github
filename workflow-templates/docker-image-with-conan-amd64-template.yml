@@ -1,0 +1,77 @@
+# This is a basic workflow to help you get started with Actions
+
+name: Navigator Docker Build AMD64
+
+
+# Controls when the action will run. 
+on:
+  push:
+    branches: [ '*' ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  build:
+    # The type of runner that the job will run on
+    runs-on: self-hosted
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ github.head_ref }}   # checkout the correct branch name
+          fetch-depth: 0                # fetch the whole repo history
+          
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@master
+        with:
+          driver-opts: network=host
+          driver: docker
+
+      - name: Login to Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ${{ secrets.JFROG_URL }}
+          username: ${{ secrets.DOCKER_REGISTRY_USER }} 
+          password: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
+      
+      - name: handle version update
+        uses: teveltech/github-tag-action@master
+        id: semantic
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          dry_run: true
+
+      - name: Override version in conanpackage.py
+        uses: teveltech/version-action@master
+        with:
+          new_version: ${{ steps.semantic.outputs.new_tag }}
+
+      - name: Build AMD64
+        uses: docker/build-push-action@v2
+        with:
+          builder: ${{ steps.buildx.outputs.name }}
+          context: .
+          file: ./Dockerfile
+          platforms: linux/amd64
+          pull: true
+          push: true
+          tags: jfrog.local:8081/reg/drone/${{ github.event.repository.name }}:${{ steps.semantic.outputs.new_tag }}
+
+      - name: Create a GitHub release
+        if: ${{ steps.semantic.outputs.prerelease != 'true' }}
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.semantic.outputs.new_tag }}
+          release_name: Release ${{ steps.semantic.outputs.new_tag }}
+          body: |
+            Docker pull command:
+            <pre><code> docker pull jfrog.local:8081/reg/drone/${{ github.event.repository.name }}:${{ steps.semantic.outputs.new_tag }} </code></pre>
+            ${{ steps.semantic.outputs.changelog }}

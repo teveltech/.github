@@ -1,6 +1,6 @@
 # This is a basic workflow to help you get started with Actions
 
-name: Navigator Docker Build AMD64
+name: Docker Build With Conan AMD64
 
 
 # Controls when the action will run. 

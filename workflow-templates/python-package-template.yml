@@ -32,12 +32,7 @@ jobs:
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         dry_run: true
-    - name: link conan config directory to github home /github/home
-      run: rm -rf $HOME/.conan && ln -s /root/.conan $HOME
-    - name: run bash script
-      shell: bash
-      run: source package_utils/setup.bash
-    - name: Install dependencies
+    - name: Install dependencies needed to upload
       run: |
         python -m pip install --upgrade pip
         pip install setuptools wheel twine

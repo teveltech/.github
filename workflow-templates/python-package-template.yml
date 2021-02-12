@@ -1,0 +1,51 @@
+# This workflow will upload a Python Package using Twine when a release is created
+# For more information see: https://help.github.com/en/actions/language-and-framework-guides/using-python-with-github-actions#publishing-to-package-registries
+
+name: Python Package Template
+
+# Controls when the action will run. 
+on:
+  push:
+    branches: [ '*' ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  build:
+    # The type of runner that the job will run on
+    runs-on: self-hosted
+    container: jfrog.local:8081/reg/base/base-full:master-AMD64
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'
+        ref: ${{ github.head_ref }}   # checkout the correct branch name
+        fetch-depth: 0                # fetch the whole repo history
+    - name: handle version update
+      uses: teveltech/github-tag-action@master
+      id: semantic
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        dry_run: true
+    - name: link conan config directory to github home /github/home
+      run: rm -rf $HOME/.conan && ln -s /root/.conan $HOME
+    - name: run bash script
+      shell: bash
+      run: source package_utils/setup.bash
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install setuptools wheel twine
+    - name: Build and publish
+      env:
+        TWINE_USERNAME: ${{ secrets.JFROG_USERNAME }}
+        TWINE_PASSWORD: ${{ secrets.JFROG_TOKEN }}
+        TWINE_REPOSITORY_URL: http://${{ secrets.JFROG_URL }}
+      run: |
+        python setup.py sdist bdist_wheel
+        twine upload dist/*

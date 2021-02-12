@@ -1,0 +1,11 @@
+{
+    "name": "Python Package Template",
+    "description": "Create and upload a Python package",
+    "categories": [
+        "python"
+    ],
+    "filePatterns": [
+        "setup.py",
+        ".*\\.md$"
+    ]
+}

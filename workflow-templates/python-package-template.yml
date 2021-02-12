@@ -16,17 +16,18 @@ jobs:
   build:
     # The type of runner that the job will run on
     runs-on: self-hosted
+    strategy:
+      matrix:
+        python-version: [2, 3]
+        include:
+          - python-version: 2
+            release: false
+          - python-version: 3
+            release: true
     container: jfrog.local:8081/reg/base/base-full:master-AMD64
 
     steps:
     - uses: actions/checkout@v2
-    
-    - name: Set up Python
-      uses: actions/setup-python@v2
-      with:
-        python-version: '3.x'
-        ref: ${{ github.head_ref }}   # checkout the correct branch name
-        fetch-depth: 0                # fetch the whole repo history
     
     - name: handle version update
       uses: teveltech/github-tag-action@master
@@ -34,13 +35,31 @@ jobs:
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         dry_run: true
+        
+    - name: Override version in setup.py
+      uses: teveltech/version-action@master
+      with:
+        new_version: ${{ steps.semantic.outputs.new_tag }}
     
     - name: Link pypi config directory and .pypirc to github home /github/home
       run: ln -s /root/.pypirc $HOME/.pypirc && ln -s /root/.pip $HOME/.pip
     
     - name: Install dependencies needed to upload
-      run: |
-        pip install setuptools wheel twine
+      run: pip${{ matrix.python-version }} install setuptools wheel twine
+      
+    - name: Install dependencies needed to build
+      run: if [ -f requirements.txt ]; then pip${{ matrix.python-version }} install -r requirements.txt; fi
 
     - name: Build and publish
-      run: python setup.py bdist_wheel upload -r local
+      run: python${{ matrix.python-version }} setup.py bdist_wheel upload -r local
+
+    - name: Create a GitHub release
+      if: ${{ steps.semantic.outputs.prerelease != 'true' }}
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ steps.semantic.outputs.new_tag }}
+        release_name: Release ${{ steps.semantic.outputs.new_tag }}
+        draft: ${{ matrix.release }}
+        body: ${{ steps.semantic.outputs.changelog }}

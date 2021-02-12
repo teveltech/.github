@@ -19,11 +19,12 @@ jobs:
     strategy:
       matrix:
         python-version: [2, 3]
+        # avoid creating two releases with the same tag
         include:
           - python-version: 2
-            release: false
+            draft_release: true
           - python-version: 3
-            release: true
+            draft_release: false
     container: jfrog.local:8081/reg/base/base-full:master-AMD64
 
     steps:
@@ -61,5 +62,5 @@ jobs:
       with:
         tag_name: ${{ steps.semantic.outputs.new_tag }}
         release_name: Release ${{ steps.semantic.outputs.new_tag }}
-        draft: ${{ matrix.release }}
+        draft: ${{ matrix.draft_release }}
         body: ${{ steps.semantic.outputs.changelog }}

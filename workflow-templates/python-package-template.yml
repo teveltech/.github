@@ -36,13 +36,11 @@ jobs:
         dry_run: true
     
     - name: Link pypi config directory and .pypirc to github home /github/home
-        run: ln -s /root/.pypirc $HOME/.pypirc && ln -s /root/.pip $HOME/.pip
+      run: ln -s /root/.pypirc $HOME/.pypirc && ln -s /root/.pip $HOME/.pip
     
     - name: Install dependencies needed to upload
       run: |
         pip install setuptools wheel twine
 
     - name: Build and publish
-        working-directory: ./python
-        run: |
-          python setup.py bdist_wheel upload -r local
+      run: python setup.py bdist_wheel upload -r local

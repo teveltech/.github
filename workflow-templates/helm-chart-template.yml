@@ -58,7 +58,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          draft: ${{ steps.semantic.outputs.prerelease != 'true' }}
+          draft: ${{ steps.semantic.outputs.prerelease }}
           tag_name: ${{ steps.semantic.outputs.new_tag }}
           release_name: Release ${{ steps.semantic.outputs.new_tag }}
           body: |

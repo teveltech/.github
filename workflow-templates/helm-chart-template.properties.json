@@ -5,7 +5,7 @@
         "helm"
     ],
     "filePatterns": [
-        "Chart.yml",
+        "Chart.yaml",
         ".*\\.md$"
     ]
 }

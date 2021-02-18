@@ -1,0 +1,11 @@
+{
+    "name": "Helm Package Chart Template",
+    "description": "Create and upload a helm chart",
+    "categories": [
+        "helm"
+    ],
+    "filePatterns": [
+        "Chart.yml",
+        ".*\\.md$"
+    ]
+}

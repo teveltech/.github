@@ -58,11 +58,12 @@ jobs:
       run: python${{ matrix.python-version }} setup.py bdist_wheel upload -r local
 
     - name: Create a GitHub release
-      if: ${{ (matrix.create-release == true) && (steps.semantic.outputs.prerelease == 'false') }}
+      if: ${{ matrix.create-release }}
       uses: actions/create-release@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
+        draft: ${{ steps.semantic.outputs.prerelease }}
         tag_name: ${{ steps.semantic.outputs.new_tag }}
         release_name: Release ${{ steps.semantic.outputs.new_tag }}
         body: ${{ steps.semantic.outputs.changelog }}

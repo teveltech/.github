@@ -12,15 +12,21 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  clean-workers:
-    runs-on: ${{ matrix.workers }}
-    strategy:
-      matrix:
-        workers: [worker1, worker2]
-    # The type of runner that the job will run on
+  clean-worker1:
+    runs-on: [self-hosted, worker1]
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Runs a single command using the runners shell
-      - name: Run a one-line script
+      - name: clean docker
+        run: docker system prune --all --force
+  
+  
+  clean-worker2:
+    runs-on: [self-hosted, worker2]
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Runs a single command using the runners shell
+      - name: clean docker
         run: docker system prune --all --force

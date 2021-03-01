@@ -67,6 +67,7 @@ jobs:
           pull: true
           push: true
           tags: jfrog.local:8081/reg/<namespace>/${{ github.event.repository.name }}:${{ steps.semantic.outputs.new_tag }}-ARM64
+          build-args: IMAGE_ARCH=ARM64
 
       - name: Create a GitHub release
         uses: actions/create-release@v1

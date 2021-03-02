@@ -70,7 +70,7 @@ jobs:
           # (AMD64 is the default arch and therefore the args are redundant)
           build-args: |
             IMAGE_ARCH=AMD64
-            CONAN_ARCH=amd8
+            CONAN_ARCH=amd64
 
       - name: Build ARM64
         uses: docker/build-push-action@v2

@@ -67,8 +67,12 @@ jobs:
           pull: true
           push: true
           tags: jfrog.local:8081/reg/<namespace>/${{ github.event.repository.name }}:${{ steps.semantic.outputs.new_tag }}-ARM64
-          build-args: IMAGE_ARCH=ARM64
+          # Dockerfile should use image according to 'IMAGE_ARCH' argument and run 'conan create' and 'conan install' according to 'CONAN_ARCH' argument
+          build-args: |
+            IMAGE_ARCH=ARM64
+            CONAN_ARCH=armv8
 
+        # disable this step if another workflow is present (only one workflow should create a release)
       - name: Create a GitHub release
         uses: actions/create-release@v1
         env:

@@ -65,7 +65,7 @@ jobs:
           platforms: linux/amd64
           pull: true
           push: true
-          tags: jfrog.local:8081/reg/drone/${{ github.event.repository.name }}:${{ steps.semantic.outputs.new_tag }}-AMD64
+          tags: jfrog.local:8081/reg/drone/${{ github.event.repository.name }}:${{ steps.semantic.outputs.new_tag }}
           build-args: IMAGE_ARCH=AMD64    # Dockerfile should use image according to this variable (this is the default value and therefore redundant)
 
       - name: Build ARM64

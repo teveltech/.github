@@ -1,4 +1,4 @@
-name: Template Docker Build AMD64 + ARM64
+name: Template Docker Build with Conan AMD64 + ARM64
 
 env:
   namespace: PLACEHOLDER # TODO: REPLACE WITH: drone | bin | gcs ...
@@ -73,7 +73,7 @@ jobs:
           # (AMD64 is the default arch and therefore the args are redundant)
           build-args: |
             IMAGE_ARCH=AMD64
-            CONAN_ARCH=amd64
+            CONAN_ARCH=x86_64
 
       - name: Build ARM64
         uses: docker/build-push-action@v2

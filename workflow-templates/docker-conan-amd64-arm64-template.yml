@@ -1,5 +1,8 @@
 name: Template Docker Build AMD64 + ARM64
 
+env:
+  namespace: PLACEHOLDER # TODO: REPLACE WITH: drone | bin | gcs ...
+
 
 # Controls when the action will run. 
 on:
@@ -65,7 +68,7 @@ jobs:
           platforms: linux/amd64
           pull: true
           push: true
-          tags: jfrog.local:8081/reg/drone/${{ github.event.repository.name }}:${{ steps.semantic.outputs.new_tag }}
+          tags: jfrog.local:8081/reg/${{ env.namespace }}/${{ github.event.repository.name }}:${{ steps.semantic.outputs.new_tag }}
           # Dockerfile should use image according to 'IMAGE_ARCH' argument and run 'conan create' and 'conan install' according to 'CONAN_ARCH' argument
           # (AMD64 is the default arch and therefore the args are redundant)
           build-args: |
@@ -81,7 +84,7 @@ jobs:
           platforms: linux/arm64
           pull: true
           push: true
-          tags: jfrog.local:8081/reg/drone/${{ github.event.repository.name }}:${{ steps.semantic.outputs.new_tag }}-ARM64
+          tags: jfrog.local:8081/reg/${{ env.namespace }}/${{ github.event.repository.name }}:${{ steps.semantic.outputs.new_tag }}-ARM64
           # Dockerfile should use image according to 'IMAGE_ARCH' argument and run 'conan create' and 'conan install' according to 'CONAN_ARCH' argument
           build-args: |
             IMAGE_ARCH=ARM64
@@ -97,5 +100,5 @@ jobs:
           release_name: Release ${{ steps.semantic.outputs.new_tag }}
           body: |
             Docker pull command:
-            <pre><code> docker pull jfrog.local:8081/reg/drone/${{ github.event.repository.name }}:${{ steps.semantic.outputs.new_tag }} </code></pre>
+            <pre><code> docker pull jfrog.local:8081/reg/${{ env.namespace }}/${{ github.event.repository.name }}:${{ steps.semantic.outputs.new_tag }} </code></pre>
             ${{ steps.semantic.outputs.changelog }}

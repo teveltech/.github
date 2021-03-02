@@ -1,6 +1,7 @@
-# This is a basic workflow to help you get started with Actions
+name: Template Docker Build AMD64
 
-name:  Template Docker Build ARM64 with Conan
+env:
+  namespace: PLACEHOLDER # TODO: REPLACE WITH: drone | bin | gcs ...
 
 
 # Controls when the action will run. 
@@ -25,12 +26,8 @@ jobs:
         with:
           ref: ${{ github.head_ref }}   # checkout the correct branch name
           fetch-depth: 0                # fetch the whole repo history
-      
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@master
-        with:
-          platforms: all
-      
+          persist-credentials: false
+          
       - name: Set up Docker Buildx
         id: buildx
         uses: docker/setup-buildx-action@master
@@ -52,27 +49,17 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           dry_run: true
 
-      - name: Override version in conanpackage.py
-        uses: teveltech/version-action@master
-        with:
-          new_version: ${{ steps.semantic.outputs.new_tag }}
-
-      - name: Build ARM64
+      - name: Build AMD64
         uses: docker/build-push-action@v2
         with:
           builder: ${{ steps.buildx.outputs.name }}
           context: .
           file: ./Dockerfile
-          platforms: linux/arm64
+          platforms: linux/amd64
           pull: true
           push: true
-          tags: jfrog.local:8081/reg/<namespace>/${{ github.event.repository.name }}:${{ steps.semantic.outputs.new_tag }}-ARM64
-          # Dockerfile should use image according to 'IMAGE_ARCH' argument and run 'conan create' and 'conan install' according to 'CONAN_ARCH' argument
-          build-args: |
-            IMAGE_ARCH=ARM64
-            CONAN_ARCH=armv8
+          tags: jfrog.local:8081/reg/${{ env.namespace }}/${{ github.event.repository.name }}:${{ steps.semantic.outputs.new_tag }}
 
-        # disable this step if another workflow is present (only one workflow should create a release)
       - name: Create a GitHub release
         uses: actions/create-release@v1
         env:
@@ -83,5 +70,5 @@ jobs:
           release_name: Release ${{ steps.semantic.outputs.new_tag }}
           body: |
             Docker pull command:
-            <pre><code> docker pull jfrog.local:8081/reg/<namespace>/${{ github.event.repository.name }}:${{ steps.semantic.outputs.new_tag }} </code></pre>
+            <pre><code> docker pull jfrog.local:8081/reg/${{ env.namespace }}/${{ github.event.repository.name }}:${{ steps.semantic.outputs.new_tag }} </code></pre>
             ${{ steps.semantic.outputs.changelog }}

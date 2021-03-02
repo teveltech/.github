@@ -1,0 +1,11 @@
+{
+    "name": "Docker Image AMD64+ARM64 Build",
+    "description": "Tevel BaseImage workflow template.",
+    "categories": [
+        "docker"
+    ],
+    "filePatterns": [
+        "^Dockerfile",
+        ".*\\.md$"
+    ]
+}

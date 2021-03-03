@@ -48,12 +48,13 @@ jobs:
       run: |
         if [ -f requirements.txt ]; then pip2 install -r requirements.txt; fi
         if [ -f requirements.txt ]; then pip3 install -r requirements.txt; fi
+        
     - name: Build and publish
       run: |
         python2 setup.py bdist_wheel upload -r local
         python3 setup.py bdist_wheel upload -r local
+
     - name: Create a GitHub release
-      if: ${{ steps.semantic.outputs.new_tag }}
       uses: actions/create-release@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

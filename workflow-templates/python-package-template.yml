@@ -16,15 +16,6 @@ jobs:
   build:
     # The type of runner that the job will run on
     runs-on: self-hosted
-    strategy:
-      matrix:
-        python-version: [2, 3]
-        # avoid creating two releases with the same tag
-        include:
-          - python-version: 2
-            create-release: true
-          - python-version: 3
-            create-release: false
     container: jfrog.local:8081/reg/base/base-full:master-AMD64
 
     steps:
@@ -49,16 +40,20 @@ jobs:
       run: ln -s /root/.pypirc $HOME/.pypirc && ln -s /root/.pip $HOME/.pip
     
     - name: Install dependencies needed to upload
-      run: pip${{ matrix.python-version }} install setuptools wheel twine
+      run: |
+        pip2 install setuptools wheel twine
+        pip3 install setuptools wheel twine
       
     - name: Install dependencies needed to build
-      run: if [ -f requirements.txt ]; then pip${{ matrix.python-version }} install -r requirements.txt; fi
-
+      run: |
+        if [ -f requirements.txt ]; then pip2 install -r requirements.txt; fi
+        if [ -f requirements.txt ]; then pip3 install -r requirements.txt; fi
     - name: Build and publish
-      run: python${{ matrix.python-version }} setup.py bdist_wheel upload -r local
-
+      run: |
+        python2 setup.py bdist_wheel upload -r local
+        python3 setup.py bdist_wheel upload -r local
     - name: Create a GitHub release
-      if: ${{ matrix.create-release }}
+      if: ${{ steps.semantic.outputs.new_tag }}
       uses: actions/create-release@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

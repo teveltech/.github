@@ -1,5 +1,3 @@
-# This is a basic workflow to help you get started with Actions
-
 name: Conan Package Template
 
 # Controls when the action will run. 
@@ -26,7 +24,7 @@ jobs:
           ref: ${{ github.head_ref }}   # checkout the correct branch name
           fetch-depth: 0                # fetch the whole repo history
       
-      - name: handle version update
+      - name: Handle version update
         uses: teveltech/github-tag-action@master
         id: semantic
         with:
@@ -38,7 +36,7 @@ jobs:
         with:
           new_version: ${{ steps.semantic.outputs.new_tag }}
 
-      - name: link conan config directory to github home /github/home
+      - name: Link conan config directory to github home /github/home
         run: rm -rf $HOME/.conan && ln -s /root/.conan $HOME
       
       - name: Create conan package

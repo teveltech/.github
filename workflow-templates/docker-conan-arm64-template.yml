@@ -80,6 +80,13 @@ jobs:
     container: jfrog.local:8081/reg/base/base-ci:master-AMD64
     
     steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - name: Checkout
+        uses: actions/checkout@v2.3.4
+        with:
+          ref: ${{ github.head_ref }}   # checkout the correct branch name
+          fetch-depth: 0                # fetch the whole repo history
+
       - name: Handle version update
         uses: teveltech/github-tag-action@master
         id: semantic

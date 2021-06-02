@@ -1,0 +1,13 @@
+{
+    "name": "Docker Image AIO",
+    "description": "Tevel BaseImage workflow template.",
+    "categories": [
+        "docker",
+        "conanfile"
+    ],
+    "filePatterns": [
+        "^Dockerfile",
+        "conanfile.py",
+        ".*\\.md$"
+    ]
+}

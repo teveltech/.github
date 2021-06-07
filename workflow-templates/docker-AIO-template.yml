@@ -157,14 +157,14 @@ jobs:
         run: |
           git tag ${{ needs.version.outputs.new_tag }}
           git push --force origin ${{ needs.version.outputs.new_tag }}
-          echo "New lightweight tag: https://github.com/teveltech/${{ github.event.repository.name }}/releases/tag/${{ needs.version.outputs.new_tag }}"
+          echo "New lightweight tag: https://github.com/${{ github.repository }}/releases/tag/${{ needs.version.outputs.new_tag }}"
           
       - name: Create Annotated Tag
         if: ${{ needs.version.outputs.new_tag && needs.version.outputs.prerelease == 'false' }}
         run: |
           git tag -a ${{ needs.version.outputs.new_tag }} -m "${{ github.event.head_commit.message }}" 
           git push --force origin ${{needs.version.outputs.new_tag }}
-          echo "New annotated tag: https://github.com/teveltech/${{ github.event.repository.name }}/releases/tag/${{ needs.version.outputs.new_tag }}"
+          echo "New annotated tag: https://github.com/${{ github.repository }}/releases/tag/${{ needs.version.outputs.new_tag }}"
           
       - name: Create a GitHub release
         id: release

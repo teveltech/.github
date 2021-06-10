@@ -133,7 +133,7 @@ jobs:
       - name: set warning
         shell: bash
         run: |
-          STRING="New release: ${{ steps.release.outputs.url }}
+          STRING="New release: ${{ steps.release.outputs.url }}"
           STRING="${STRING//'%'/'%25'}"
           STRING="${STRING//$'\n'/'%0A'}"
           STRING="${STRING//$'\r'/'%0D'}"

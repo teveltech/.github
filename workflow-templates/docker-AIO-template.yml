@@ -17,6 +17,7 @@ on:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   version:
+    name: Handle version update
     # The type of runner that the job will run on
     runs-on: self-hosted
     container: jfrog.local:8081/reg/base/base-ci:master-AMD64
@@ -136,7 +137,8 @@ jobs:
           cache-to: type=inline
 
 
-  Github_Tag_and_Release:
+  release:
+    name: Git tag and GitHub release
     needs: [version, Build]
     runs-on: self-hosted
     container: jfrog.local:8081/reg/base/base-ci:master-AMD64

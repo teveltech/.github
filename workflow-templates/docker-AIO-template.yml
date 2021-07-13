@@ -1,8 +1,9 @@
 name: Template Docker Build with Conan AMD64 + ARM64
 
 env:
-  namespace: PLACEHOLDER  # TODO: REPLACE WITH: drone | bin | gcs ...
-  conan:     PLACEHOLDER  # TODO: REPLACE WITH: true | false
+  namespace:  PLACEHOLDER             # TODO: REPLACE WITH: drone | bin | gcs ...
+  conan:      PLACEHOLDER             # TODO: REPLACE WITH: true | false
+  arch:       linux/amd64,linux/arm64 # TODO: replace with correct arch
   
 # Controls when the action will run. 
 on:
@@ -98,7 +99,7 @@ jobs:
         with:
           context: .
           file: ./Dockerfile
-          platforms: linux/amd64,linux/arm64    # TODO: replace with correct arch
+          platforms: ${{ env.arch }}
           pull: true
           push: true
           tags: ${{ secrets.JFROG_URL }}/reg/${{ env.namespace }}/${{ github.event.repository.name }}:${{ needs.version.outputs.new_tag }}

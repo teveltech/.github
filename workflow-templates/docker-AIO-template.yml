@@ -149,18 +149,13 @@ jobs:
           body: |
             Docker pull command AMD64 (if built):
             <pre><code> docker pull jfrog.local:8081/reg/${{ env.namespace }}/${{ github.event.repository.name }}:${{ needs.version.outputs.new_tag }} </code></pre>
-            Docker pull command ARM64 (if built):
-            <pre><code> docker pull jfrog.local:8081/reg/${{ env.namespace }}/${{ github.event.repository.name }}:${{ needs.version.outputs.new_tag }}-ARM64 </code></pre>
-            ${{ needs.version.outputs.changelog }}
             
       - name: set warning
         shell: bash
         run: |
           STRING="New release: ${{ steps.release.outputs.url }}
           Docker pull command AMD64 (if built):
-          docker pull jfrog.local:8081/reg/${{ env.namespace }}/${{ github.event.repository.name }}:${{ needs.version.outputs.new_tag }}
-          Docker pull command ARM64 (if built):
-          docker pull jfrog.local:8081/reg/${{ env.namespace }}/${{ github.event.repository.name }}:${{ needs.version.outputs.new_tag }}-ARM64"
+          docker pull jfrog.local:8081/reg/${{ env.namespace }}/${{ github.event.repository.name }}:${{ needs.version.outputs.new_tag }}"
           STRING="${STRING//'%'/'%25'}"
           STRING="${STRING//$'\n'/'%0A'}"
           STRING="${STRING//$'\r'/'%0D'}"

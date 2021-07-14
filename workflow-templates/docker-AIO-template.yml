@@ -148,14 +148,14 @@ jobs:
           tag_name: ${{ needs.version.outputs.new_tag }}
           name: Release ${{ needs.version.outputs.new_tag }}
           body: |
-            Docker pull command AMD64 (if built):
+            Docker pull command:
             <pre><code> docker pull jfrog.local:8081/reg/${{ env.namespace }}/${{ github.event.repository.name }}:${{ needs.version.outputs.new_tag }} </code></pre>
             
       - name: set warning
         shell: bash
         run: |
           STRING="New release: ${{ steps.release.outputs.url }}
-          Docker pull command AMD64 (if built):
+          Docker pull command:
           docker pull jfrog.local:8081/reg/${{ env.namespace }}/${{ github.event.repository.name }}:${{ needs.version.outputs.new_tag }}"
           STRING="${STRING//'%'/'%25'}"
           STRING="${STRING//$'\n'/'%0A'}"
